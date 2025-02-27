@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
-export const InputArea=styled.section`
+export const InputArea = styled.section`
     display: flex;
-    width: 1024px;
+    max-width: 1024px;
     margin: auto;
     justify-content: space-between;
     padding: 40px 0px;
@@ -24,5 +24,13 @@ export const InputArea=styled.section`
         box-shadow: 2px 2px 1em rgba(0,0,0,0.2);
         outline: 0;
         font-size: 14px;
+    }
+
+    @media (max-width: 1024px){
+        display: flex;
+        flex-direction: column;
+        input{
+            width: 343px;
+        }
     }
 `

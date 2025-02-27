@@ -5,8 +5,8 @@ export const Header = styled.header`
   box-shadow: 2px 2px 1em rgba(0, 0, 0, 0.2);
   .header-container {
     display: flex;
-    width: 1024px;
     margin: auto;
+    padding-inline: 30px;
     justify-content: space-between;
     align-items: center;
     height: 100%;

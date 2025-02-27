@@ -43,7 +43,7 @@ export const Countries = () => {
                 ) : (
                     filteredCountries.map(item => (
                         <CountryItem
-                            key={item.name} // Add key prop for React rendering
+                            key={item.name}
                             name={item.name}
                             population={item.population}
                             region={item.region}
