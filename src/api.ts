@@ -15,6 +15,6 @@ export const api={
     },
     getCountryByCode:async(code:string)=>{
         let response=await http.get(`alpha?codes=${code}`)
-        return response.data
+        return response.data[0]
     }
 }

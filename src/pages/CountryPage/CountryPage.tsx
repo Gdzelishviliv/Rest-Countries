@@ -6,22 +6,62 @@ import SingleCountry from "../../Components/SingleCountry/Singlecountry";
 import { api } from "../../api";
 
 export const CountryPage = () => {
-  const { name } = useParams();
+  const { name, code } = useParams();
   const [loading, setLoading] = useState(false);
-  const [country, setCountry] = useState<CountryTs[]>([]);
+  const [country, setCountry] = useState<CountryTs | null>(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (name) {
-      getCountry(name);
+    if (code) {
+      fetchCountryByCode(code);
+    } else if (name) {
+      fetchCountryByName(name);
     }
-  }, [name]);
+  }, [name, code]);
 
-  const getCountry = async (param: string) => {
+  const fetchCountryByName = async (param: string) => {
     setLoading(true);
-    let country = await api.getCountry(param);
-    setCountry(country);
+    setError(false);
+    try {
+      const data = await api.getCountry(param);
+      console.log("API Response (by name):", data);
+
+      if (data && data.length > 0) {
+        setCountry(data[0]);
+      } else {
+        setError(true);
+        setCountry(null);
+      }
+    } catch (error) {
+      console.error("Error fetching country:", error);
+      setError(true);
+    }
     setLoading(false);
   };
+
+  const fetchCountryByCode = async (param: string) => {
+    setLoading(true);
+    setError(false);
+    try {
+      const data = await api.getCountryByCode(param);
+      console.log("API Response (by code):", data); 
+
+      if (data && typeof data === "object") {
+        setCountry(data);
+      } else {
+        setError(true);
+        setCountry(null);
+      }
+    } catch (error) {
+      console.error("Error fetching country:", error);
+      setError(true);
+    }
+    setLoading(false);
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (error || !country) return <p>Country not found.</p>;
+  console.log({ country });
 
   return (
     <C.CountryPage>
@@ -29,24 +69,21 @@ export const CountryPage = () => {
         <Link to="/" className="back--button">
           Back
         </Link>
-        {loading && <div className="loading">loading...</div>}
-        {!loading &&
-          country.map((item: CountryTs) => (
-            <SingleCountry
-              key={item.name}
-              flag={item.flags.png}
-              name={item.name}
-              nativeName={item.nativeName}
-              region={item.region}
-              subregion={item.subregion}
-              capital={item.capital}
-              topLevelDomain={item.topLevelDomain[0]}
-              currencie={item.currencies && item.currencies}
-              languages={item.languages}
-              borders={item.borders}
-              population={item.population}
-            />
-          ))}
+
+        <SingleCountry
+          key={country?.name || "default"}
+          flag={country?.flags?.png || "https://via.placeholder.com/150"}
+          name={country?.name || "Unknown"}
+          nativeName={country?.nativeName || "N/A"}
+          region={country?.region || "N/A"}
+          subregion={country?.subregion || "N/A"}
+          capital={country?.capital || "N/A"}
+          topLevelDomain={country?.topLevelDomain?.[0] || "N/A"}
+          currencie={country?.currencies || []}
+          languages={country?.languages || []}
+          borders={country?.borders || []}
+          population={country?.population}
+        />
       </div>
     </C.CountryPage>
   );
